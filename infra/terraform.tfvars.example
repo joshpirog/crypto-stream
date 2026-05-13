@@ -1,0 +1,16 @@
+project     = "mktstream"
+environment = "dev"
+location    = "eastus"
+
+databricks_sku           = "premium"
+eventhub_partition_count = 2
+eventhub_retention_days  = 1
+
+producer_image  = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+producer_cpu    = 0.25
+producer_memory = "0.5Gi"
+
+tags = {
+  project = "market-stream"
+  owner   = "josh"
+}
