@@ -68,3 +68,7 @@ First pull after `terraform apply` may fail for ~30–60s while the `AcrPull` ro
 - Resource names use the pattern `<azure-abbr>-${local.name}-${local.suffix}` (e.g. `dbw-mktstream-dev-a1b2c`). Storage/ACR/Cosmos use no-hyphen variants because Azure rejects hyphens in those. The `random_string.suffix` exists to keep globally-scoped names unique across redeploys.
 - Provider is pinned to `azurerm ~> 4.10`. **Validate with context7 (`/hashicorp/terraform-provider-azurerm`) before writing new resources** — v4 changed several schemas (e.g. `partition_key_path` → `partition_key_paths`, `kafka_enabled` removed from `eventhub_namespace`, `registry.identity` requires UA identity resource ID).
 - Sensitive outputs are marked `sensitive = true` — read them with `terraform output -raw <name>`.
+
+
+## Notes
+- Always reference Context7 when making changes
