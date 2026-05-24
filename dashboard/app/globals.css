@@ -2,11 +2,159 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg: #070a0e;
+  --bg-2: #0b0f15;
+  --panel: #0c1118;
+  --panel-2: #0f151d;
+  --border: #1a232f;
+  --border-glow: #28384a;
+  --text: #dbe4ee;
+  --text-dim: #76859a;
+  --text-faint: #45525f;
+  --amber: #ffb000;
+  --amber-dim: #8a5e10;
+  --up: #34e29b;
+  --down: #ff5d73;
+  --cyan: #4cc9f0;
+}
+
 html,
 body {
   height: 100%;
 }
 
 body {
-  background-color: #f9fafb; /* gray-50 */
+  color: var(--text);
+  background-color: var(--bg);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  background-image:
+    radial-gradient(1100px 520px at 50% -12%, rgba(255, 176, 0, 0.07), transparent 62%),
+    radial-gradient(900px 600px at 100% 0%, rgba(76, 201, 240, 0.05), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 3px);
+  background-attachment: fixed;
+}
+
+/* Fine grain overlay for CRT-terminal atmosphere */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-glow);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--amber-dim);
+}
+
+@layer components {
+  .panel {
+    position: relative;
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+  /* hairline accent along the top edge */
+  .panel::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
+    opacity: 0.6;
+  }
+
+  .tag {
+    font-size: 10.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .tag b {
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: var(--up);
+    box-shadow: 0 0 0 0 rgba(52, 226, 155, 0.7);
+    animation: pulse-dot 1.6s infinite;
+  }
+  .live-dot.down {
+    background: var(--down);
+    box-shadow: 0 0 0 0 rgba(255, 93, 115, 0.7);
+    animation: pulse-dot-down 1.6s infinite;
+  }
+  .live-dot.amber {
+    background: var(--amber);
+    box-shadow: 0 0 0 0 rgba(255, 176, 0, 0.7);
+    animation: pulse-dot-amber 1.6s infinite;
+  }
+
+  .blink {
+    animation: blink 1.3s steps(1) infinite;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(52, 226, 155, 0.6); }
+  70% { box-shadow: 0 0 0 7px rgba(52, 226, 155, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(52, 226, 155, 0); }
+}
+@keyframes pulse-dot-down {
+  0% { box-shadow: 0 0 0 0 rgba(255, 93, 115, 0.6); }
+  70% { box-shadow: 0 0 0 7px rgba(255, 93, 115, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 93, 115, 0); }
+}
+@keyframes pulse-dot-amber {
+  0% { box-shadow: 0 0 0 0 rgba(255, 176, 0, 0.6); }
+  70% { box-shadow: 0 0 0 7px rgba(255, 176, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 176, 0, 0); }
+}
+
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(-7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes flash-up {
+  0% { background-color: rgba(52, 226, 155, 0.18); }
+  100% { background-color: transparent; }
+}
+@keyframes flash-down {
+  0% { background-color: rgba(255, 93, 115, 0.18); }
+  100% { background-color: transparent; }
+}
+
+.row-in-up {
+  animation: row-in 0.22s ease-out, flash-up 0.9s ease-out;
+}
+.row-in-down {
+  animation: row-in 0.22s ease-out, flash-down 0.9s ease-out;
 }

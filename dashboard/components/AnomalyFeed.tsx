@@ -1,70 +1,76 @@
 "use client";
 
-import {
-  Card,
-  Title,
-  Badge,
-  Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
-  TableBody,
-  TableCell,
-  type Color,
-} from "@tremor/react";
 import { useLive } from "@/lib/useLive";
 import type { Anomaly, AnomalyType } from "@/lib/types";
 
-const badgeColor = (t: AnomalyType): Color =>
-  t === "whale" ? "amber" : t === "price_spike" ? "rose" : "purple";
+const COLS = "grid-cols-[68px_70px_110px_1fr_1fr_64px]";
 
-const usd = (n: number) =>
-  `$${Math.round(n).toLocaleString()}`;
+const accent = (t: AnomalyType): string =>
+  t === "whale" ? "var(--amber)" : t === "price_spike" ? "var(--down)" : "var(--cyan)";
+
+const fmtTime = (iso: string) => {
+  try {
+    return new Date(iso.endsWith("Z") ? iso : `${iso}Z`).toISOString().slice(11, 19);
+  } catch {
+    return "--:--:--";
+  }
+};
+const usd = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 export default function AnomalyFeed() {
   const { data } = useLive<Anomaly[]>("/api/anomalies?limit=25");
   const rows = data ?? [];
 
   return (
-    <Card>
-      <Title>Anomalies &amp; whale trades</Title>
-      <Table className="mt-4">
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell>Time</TableHeaderCell>
-            <TableHeaderCell>Symbol</TableHeaderCell>
-            <TableHeaderCell>Type</TableHeaderCell>
-            <TableHeaderCell>Side</TableHeaderCell>
-            <TableHeaderCell className="text-right">Price</TableHeaderCell>
-            <TableHeaderCell className="text-right">Notional</TableHeaderCell>
-            <TableHeaderCell className="text-right">z-score</TableHeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((a) => (
-            <TableRow key={a.id}>
-              <TableCell>
-                {new Date(
-                  a.detected_at.endsWith("Z") ? a.detected_at : `${a.detected_at}Z`
-                ).toLocaleTimeString()}
-              </TableCell>
-              <TableCell>{a.symbol}</TableCell>
-              <TableCell>
-                <Badge color={badgeColor(a.anomaly_type)}>{a.anomaly_type}</Badge>
-              </TableCell>
-              <TableCell>{a.side}</TableCell>
-              <TableCell className="text-right">{usd(a.price)}</TableCell>
-              <TableCell className="text-right">{usd(a.notional)}</TableCell>
-              <TableCell className="text-right">{a.zscore?.toFixed(2)}</TableCell>
-            </TableRow>
-          ))}
-          {rows.length === 0 && (
-            <TableRow>
-              <TableCell>No anomalies detected yet</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </Card>
+    <div className="panel p-4">
+      <div className="flex items-center justify-between pb-3">
+        <span className="tag">
+          [ <b>ANOMALIES</b> · z-score &amp; whale detection ]
+        </span>
+        <span className="tag text-[var(--text-faint)]">pipeline · cosmos</span>
+      </div>
+
+      <div
+        className={`grid ${COLS} gap-2 border-y border-[var(--border)] py-1.5 text-[10px] uppercase tracking-[0.15em] text-[var(--text-faint)]`}
+      >
+        <span>Time</span>
+        <span>Symbol</span>
+        <span>Type</span>
+        <span className="text-right">Price</span>
+        <span className="text-right">Notional</span>
+        <span className="text-right">Z</span>
+      </div>
+
+      <div className="max-h-[260px] overflow-y-auto">
+        {rows.map((a) => {
+          const c = accent(a.anomaly_type);
+          return (
+            <div
+              key={a.id}
+              className={`grid ${COLS} items-center gap-2 border-b border-[var(--border)] py-2 text-[12.5px]`}
+            >
+              <span className="tnum text-[var(--text-faint)]">{fmtTime(a.detected_at)}</span>
+              <span className="text-[var(--text-dim)]">{a.symbol}</span>
+              <span
+                className="justify-self-start rounded-[2px] border px-1.5 py-0.5 text-[9.5px] uppercase tracking-[0.1em]"
+                style={{ color: c, borderColor: c }}
+              >
+                {a.anomaly_type}
+              </span>
+              <span className="tnum text-right text-[var(--text)]">{usd(a.price)}</span>
+              <span className="tnum text-right text-[var(--text-dim)]">{usd(a.notional)}</span>
+              <span className="tnum text-right" style={{ color: c }}>
+                {a.zscore?.toFixed(1)}
+              </span>
+            </div>
+          );
+        })}
+        {rows.length === 0 && (
+          <div className="py-8 text-center">
+            <span className="tag text-[var(--text-faint)]">no anomalies detected yet</span>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
