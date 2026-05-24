@@ -1,0 +1,51 @@
+bundle:
+  name: market-stream
+
+variables:
+  node_type:
+    description: VM size for the streaming cluster
+    default: Standard_D4s_v3
+  spark_version:
+    description: Databricks Runtime (verify with `databricks clusters spark-versions`)
+    default: 17.3.x-scala2.13
+
+resources:
+  jobs:
+    market_stream_pipeline:
+      name: market-stream-pipeline
+      max_concurrent_runs: 1
+
+      job_clusters:
+        - job_cluster_key: stream_cluster
+          new_cluster:
+            spark_version: ${var.spark_version}
+            node_type_id: ${var.node_type}
+            num_workers: 0
+            data_security_mode: SINGLE_USER
+            single_user_name: ${workspace.current_user.userName}
+            spark_conf:
+              spark.databricks.cluster.profile: singleNode
+              spark.master: "local[*]"
+            custom_tags:
+              ResourceClass: SingleNode
+
+      tasks:
+        - task_key: stream
+          job_cluster_key: stream_cluster
+          notebook_task:
+            notebook_path: ./notebooks/pipeline.py
+          libraries:
+            - pypi:
+                package: azure-cosmos
+
+      # Continuous trigger keeps the run alive and restarts it on failure.
+      # `development` mode (below) auto-pauses this — unpause to go live.
+      continuous:
+        pause_status: PAUSED
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405615183315554.14.azuredatabricks.net
