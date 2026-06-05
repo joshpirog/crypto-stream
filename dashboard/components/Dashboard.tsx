@@ -21,10 +21,10 @@ export default function Dashboard() {
             className="text-xl font-bold tracking-[0.08em] text-[var(--text)]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            MARKET<span className="text-[var(--amber)]">//</span>STREAM
+            CRYPTO<span className="text-[var(--amber)]">//</span>STREAM
           </h1>
           <span className="tag hidden text-[var(--text-faint)] sm:inline">
-            crypto intelligence terminal
+            market intelligence terminal
           </span>
         </div>
         <div className="flex items-center gap-3">

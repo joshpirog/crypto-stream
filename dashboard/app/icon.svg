@@ -1,0 +1,19 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- terminal tile -->
+  <rect width="32" height="32" rx="7" fill="#070a0e"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="#28384a" stroke-opacity="0.6"/>
+
+  <!-- down candle (red) -->
+  <line x1="11" y1="4" x2="11" y2="28" stroke="#ff5d73" stroke-width="2.4"/>
+  <rect x="7.5" y="9" width="7" height="12" rx="1.4" fill="#ff5d73"/>
+
+  <!-- up candle (green) -->
+  <line x1="22" y1="4" x2="22" y2="28" stroke="#34e29b" stroke-width="2.4"/>
+  <rect x="18.5" y="13" width="7" height="12" rx="1.4" fill="#34e29b"/>
+
+  <!-- live pulse (amber) -->
+  <circle cx="27" cy="5" r="2.2" fill="#ffb000">
+    <animate attributeName="opacity" values="1;1;0.15;0.15;1" keyTimes="0;0.4;0.5;0.9;1"
+             dur="1.2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

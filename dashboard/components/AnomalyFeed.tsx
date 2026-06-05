@@ -27,7 +27,6 @@ export default function AnomalyFeed() {
         <span className="tag">
           [ <b>ANOMALIES</b> · z-score &amp; whale detection ]
         </span>
-        <span className="tag text-[var(--text-faint)]">pipeline · cosmos</span>
       </div>
 
       <div
