@@ -45,7 +45,7 @@ export default function VwapChart() {
 
   return (
     <div className="panel flex h-full flex-col p-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="tag">
           [ <b>VWAP</b> · 1m windows ]
         </span>
@@ -54,7 +54,7 @@ export default function VwapChart() {
             <button
               key={s}
               onClick={() => setSymbol(s)}
-              className={`rounded-[3px] border px-2 py-1 text-[10px] tracking-[0.1em] transition ${
+              className={`rounded-[3px] border px-2 py-1 text-[10px] tracking-[0.1em] transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--amber)] ${
                 symbol === s
                   ? "border-[var(--amber-dim)] text-[var(--amber)]"
                   : "border-[var(--border)] text-[var(--text-dim)] hover:text-[var(--text)]"

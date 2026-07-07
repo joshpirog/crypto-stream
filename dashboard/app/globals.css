@@ -158,3 +158,16 @@ body::before {
 .row-in-down {
   animation: row-in 0.22s ease-out, flash-down 0.9s ease-out;
 }
+
+/* Respect the OS "reduce motion" setting: kill the blink/pulse/row animations
+   but keep the static color states that carry meaning (up/down, live/down). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

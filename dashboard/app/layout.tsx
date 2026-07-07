@@ -17,7 +17,7 @@ const display = Chakra_Petch({
 });
 
 export const metadata: Metadata = {
-  title: "Crypto Stream - live market terminal",
+  title: "Crypto Stream",
   description: "Real-time crypto VWAP, anomalies, and pipeline health",
 };
 
