@@ -38,7 +38,7 @@ Key shape decisions:
 All Terraform in `infra/`. Local state (no remote backend).
 
 ```powershell
-cd C:\Code\market-stream\infra
+cd C:\Code\crypto-stream\infra
 Copy-Item terraform.tfvars.example terraform.tfvars   # first time only
 az login
 terraform init; terraform plan; terraform apply
@@ -67,7 +67,7 @@ az containerapp update -n (terraform output -raw container_app_producer_name) -g
 - UC: catalog `market` (managed location = `metastore` container), schemas `bronze`/`silver`/`gold`, external tables over the `abfss://` paths.
 
 ```powershell
-cd C:\Code\market-stream\databricks
+cd C:\Code\crypto-stream\databricks
 databricks bundle deploy          # creates job (dev mode auto-pauses the continuous trigger)
 databricks bundle run market_stream_pipeline
 ```

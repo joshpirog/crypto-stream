@@ -52,7 +52,7 @@ export default function AnomalyFeed() {
                   key={a.id}
                   className={`grid ${COLS} items-center gap-2 border-b border-[var(--border)] py-2 text-[12.5px]`}
                 >
-                  <span className="tnum text-[var(--text-faint)]">{fmtTime(a.detected_at)}</span>
+                  <span className="tnum text-[var(--text-faint)]">{fmtTime(a.event_time)}</span>
                   <span className="text-[var(--text-dim)]">{a.symbol}</span>
                   <span
                     className="justify-self-start rounded-[2px] border px-1.5 py-0.5 text-[9.5px] uppercase tracking-[0.1em]"
