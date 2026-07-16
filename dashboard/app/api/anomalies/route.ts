@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   try {
     const { resources } = await container("anomalies")
       .items.query<Anomaly>({
-        query: "SELECT TOP @limit * FROM c ORDER BY c.detected_at DESC",
+        query: "SELECT TOP @limit * FROM c ORDER BY c.event_time DESC",
         parameters: [{ name: "@limit", value: limit }],
       })
       .fetchAll();
