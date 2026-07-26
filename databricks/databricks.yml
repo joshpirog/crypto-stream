@@ -26,6 +26,11 @@ resources:
             spark_conf:
               spark.databricks.cluster.profile: singleNode
               spark.master: "local[*]"
+              # Long-running streaming on one node: give driver RPCs (incl. the
+              # state-store coordinator) headroom so a transient stall doesn't
+              # trip the 120s default and abort the run. See last-failure logs.
+              spark.rpc.askTimeout: "300s"
+              spark.network.timeout: "300s"
             custom_tags:
               ResourceClass: SingleNode
 
@@ -38,14 +43,19 @@ resources:
             - pypi:
                 package: azure-cosmos
 
-      # Continuous trigger keeps the run alive and restarts it on failure.
-      # `development` mode (below) auto-pauses this — unpause to go live.
+      # Continuous trigger keeps the run alive and restarts it from the
+      # checkpoint on failure (transient RPC/Kafka timeouts self-heal).
+      # Single-environment bundle: the target below sets no `mode`, so this
+      # UNPAUSED value is honored literally and the trigger runs live.
       continuous:
-        pause_status: PAUSED
+        pause_status: UNPAUSED
 
 targets:
-  dev:
-    mode: development
+  # Single environment (matches the single-env infra). No `mode` preset, so
+  # no [dev user] name prefix and no forced trigger-pause — `bundle deploy`
+  # deploys the live continuous job directly. Stop it between demos with
+  # `scripts\pipeline.ps1 stop` (nothing auto-pauses it).
+  default:
     default: true
     workspace:
       host: https://adb-7405615183315554.14.azuredatabricks.net

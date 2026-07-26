@@ -48,6 +48,11 @@ kafka_options = {
     "startingOffsets": "latest",
     "failOnDataLoss": "false",
     "maxOffsetsPerTrigger": "5000",
+    # Driver fetches partition offsets at planning time; the 60s default has
+    # timed out under load ("position for partition trades-N could not be
+    # determined"). Give the offset/metadata lookups more room.
+    "kafka.request.timeout.ms": "120000",
+    "kafka.default.api.timeout.ms": "120000",
 }
 
 (
