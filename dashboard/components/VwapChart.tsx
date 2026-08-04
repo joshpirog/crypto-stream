@@ -10,8 +10,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { useLive } from "@/lib/useLive";
-import type { VwapMetric } from "@/lib/types";
+import { useVwapSeries } from "@/lib/dataSource";
 
 const SYMBOLS = ["BTC-USD", "ETH-USD", "SOL-USD"];
 const usd = (n: number) => `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
@@ -34,7 +33,7 @@ function ChartTooltip({ active, payload, label }: TooltipProps) {
 
 export default function VwapChart() {
   const [symbol, setSymbol] = useState("BTC-USD");
-  const { data } = useLive<VwapMetric[]>(`/api/vwap?symbol=${symbol}&limit=60`);
+  const { data } = useVwapSeries(symbol, 60);
 
   const chart = (data ?? []).map((d) => ({
     t: new Date(d.window_start.endsWith("Z") ? d.window_start : `${d.window_start}Z`)

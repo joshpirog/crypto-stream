@@ -1,5 +1,10 @@
 import Dashboard from "@/components/Dashboard";
+import { DemoProvider } from "@/lib/demo/DemoProvider";
 
 export default function Page() {
-  return <Dashboard />;
+  return (
+    <DemoProvider>
+      <Dashboard />
+    </DemoProvider>
+  );
 }

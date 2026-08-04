@@ -65,11 +65,17 @@ function Assert-LastExit($what) {
 # `databricks bundle deploy` resets it to UNPAUSED, which is the intended "go
 # live" behaviour.
 function Set-JobPauseStatus($JobId, $Status) {
-  $payload = @{ new_settings = @{ continuous = @{ pause_status = $Status } } } | ConvertTo-Json -Depth 6 -Compress
+  # `job_id` must live INSIDE the payload -- the CLI rejects a positional
+  # job_id whenever --json is used. Cast to int64 so it serializes as a
+  # number, not a quoted string.
+  $payload = @{
+    job_id       = [int64]$JobId
+    new_settings = @{ continuous = @{ pause_status = $Status } }
+  } | ConvertTo-Json -Depth 6 -Compress
   $tmp = New-TemporaryFile
   try {
     Set-Content -Path $tmp.FullName -Value $payload -Encoding ascii
-    databricks jobs update $JobId --json "@$($tmp.FullName)" | Out-Null
+    databricks jobs update --json "@$($tmp.FullName)" | Out-Null
     Assert-LastExit "job set pause_status=$Status"
   } finally {
     Remove-Item $tmp.FullName -Force -ErrorAction SilentlyContinue

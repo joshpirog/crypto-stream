@@ -1,7 +1,7 @@
 "use client";
 
-import { useLive } from "@/lib/useLive";
-import type { Anomaly, AnomalyType } from "@/lib/types";
+import { useAnomalyFeed } from "@/lib/dataSource";
+import type { AnomalyType } from "@/lib/types";
 
 const COLS = "grid-cols-[68px_70px_110px_1fr_1fr_64px]";
 
@@ -18,7 +18,7 @@ const fmtTime = (iso: string) => {
 const usd = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 export default function AnomalyFeed() {
-  const { data } = useLive<Anomaly[]>("/api/anomalies?limit=25");
+  const { data } = useAnomalyFeed(25);
   const rows = data ?? [];
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTradeTape } from "@/lib/useTradeTape";
+import { useDemoIngest } from "@/lib/demo/DemoProvider";
 import LiveBadge from "./LiveBadge";
 import Clock from "./Clock";
 import TickerTiles from "./TickerTiles";
@@ -10,8 +11,10 @@ import LiveTape from "./LiveTape";
 import AnomalyFeed from "./AnomalyFeed";
 
 export default function Dashboard() {
-  // One WebSocket for the whole page: raw price ticks feed the tiles + the tape.
-  const { trades, status, last } = useTradeTape();
+  // One WebSocket for the whole page: raw price ticks feed the tiles + the tape,
+  // and in demo mode the same stream also feeds the in-browser gold aggregator.
+  const ingest = useDemoIngest();
+  const { trades, status, last } = useTradeTape(ingest);
 
   return (
     <div className="mx-auto max-w-[1440px] px-5 py-5">

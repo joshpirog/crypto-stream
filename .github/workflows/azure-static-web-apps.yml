@@ -26,6 +26,7 @@ jobs:
           api_location: ""
           output_location: ""
         env:
+          NEXT_PUBLIC_DEMO_MODE: ${{ vars.DEMO_MODE }}
           COSMOS_ENDPOINT: ${{ secrets.COSMOS_ENDPOINT }}
           COSMOS_KEY: ${{ secrets.COSMOS_KEY }}
           COSMOS_DATABASE: ${{ secrets.COSMOS_DATABASE }}

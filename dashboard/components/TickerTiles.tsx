@@ -1,7 +1,6 @@
 "use client";
 
-import { useLive } from "@/lib/useLive";
-import type { VwapMetric } from "@/lib/types";
+import { useVwapSeries } from "@/lib/dataSource";
 import type { LastPrice } from "@/lib/useTradeTape";
 
 const SYMBOLS = ["BTC-USD", "ETH-USD", "SOL-USD"];
@@ -21,7 +20,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 function Tile({ symbol, live }: { symbol: string; live?: LastPrice }) {
-  const { data } = useLive<VwapMetric[]>(`/api/vwap?symbol=${symbol}&limit=1`);
+  const { data } = useVwapSeries(symbol, 1);
   const m = data?.[data.length - 1];
   const [base, quote] = symbol.split("-");
 
@@ -54,7 +53,10 @@ function Tile({ symbol, live }: { symbol: string; live?: LastPrice }) {
       <div className="mt-4 grid grid-cols-3 gap-3">
         <Stat label="σ price" value={m?.stddev_price != null ? m.stddev_price.toFixed(2) : "—"} />
         <Stat label="volume" value={m?.volume != null ? m.volume.toFixed(3) : "—"} />
-        <Stat label="trades" value={m?.trade_count != null ? String(m.trade_count) : "—"} />
+        {/* A real gold window always has a positive count, so 0 only ever means
+            "unknown" — a window backfilled from a candle, which carries no trade
+            detail. Show a dash rather than a misleading zero. */}
+        <Stat label="trades" value={m?.trade_count ? String(m.trade_count) : "—"} />
       </div>
     </div>
   );

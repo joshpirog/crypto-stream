@@ -1,7 +1,6 @@
 "use client";
 
-import { useLive } from "@/lib/useLive";
-import type { PipelineHealth } from "@/lib/types";
+import { usePipelineHealth } from "@/lib/dataSource";
 
 function parseUtcMs(s: string): number {
   let iso = s.includes("T") ? s : s.replace(" ", "T");
@@ -10,15 +9,21 @@ function parseUtcMs(s: string): number {
 }
 
 export default function HealthPanel() {
-  const { data } = useLive<PipelineHealth | null>("/api/health");
+  const { data } = usePipelineHealth();
 
   const updatedAgo = data
     ? Math.max(0, Math.round((Date.now() - parseUtcMs(data.updated_at)) / 1000))
     : null;
   const hasEvent = data?.last_event_time && data.last_event_time !== "None";
+  // Clamped at 0: a negative processing lag is meaningless, and the two timestamps
+  // come from different clocks (Coinbase stamps the event, we stamp the write), so
+  // any skew between them can push the difference below zero.
   const lagSec =
     data && hasEvent
-      ? Math.round((parseUtcMs(data.updated_at) - parseUtcMs(data.last_event_time)) / 1000)
+      ? Math.max(
+          0,
+          Math.round((parseUtcMs(data.updated_at) - parseUtcMs(data.last_event_time)) / 1000)
+        )
       : null;
 
   const dotClass =

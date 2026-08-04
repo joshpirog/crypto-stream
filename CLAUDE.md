@@ -80,6 +80,13 @@ databricks bundle run market_stream_pipeline
 - App Router; `app/api/{vwap,anomalies,health}/route.ts` are `force-dynamic` route handlers querying Cosmos server-side (`@azure/cosmos`); client polls via SWR (`lib/useLive.ts`). Live tape via `lib/useTradeTape.ts` (browser WS to Coinbase).
 - **Hybrid** Next.js on SWA (`output_location: ""` in `.github/workflows/azure-static-web-apps.yml`). Cosmos creds live in **SWA Application Settings** (server-side, never in client JS) + GitHub secrets for the build.
 - Local dev: `cd dashboard; cp .env.local.example .env.local` (fill `COSMOS_ENDPOINT`/`COSMOS_KEY` from TF outputs); `npm run dev`.
+- **Demo mode** (`NEXT_PUBLIC_DEMO_MODE=1`): runs with zero Azure dependency, for keeping the
+  portfolio link up while the stack is destroyed. All panels read through `lib/dataSource.ts`,
+  which swaps the Cosmos route handlers for `lib/demo/engine.ts` — the gold layer
+  (`gold_aggregate.py`) reimplemented over the browser's existing Coinbase socket, backfilled
+  from the public candles endpoint. Real data, real logic, no server. Details and the two
+  documented approximations are in `dashboard/README.md`. Keep the two paths in sync: any new
+  panel should call `lib/dataSource.ts`, never `useLive` directly.
 
 ## Operational gotchas (hard-won — don't relearn these)
 
